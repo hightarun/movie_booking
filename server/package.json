@@ -1,0 +1,31 @@
+{
+  "name": "movie_booking_server",
+  "version": "1.0.0",
+  "description": "movie booking app backend",
+  "main": "server.js",
+  "author": "hightarun",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon server.js",
+    "start": "NODE_ENV=production node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "config": "^3.3.9",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.2.1",
+    "nodemailer": "^6.9.2",
+    "npmlog": "^7.0.1",
+    "request": "^2.88.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
