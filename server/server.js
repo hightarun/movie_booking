@@ -31,6 +31,10 @@ app.get("/", (req, res) => {
   return res.status(401).json({ msg: "Not Authorized" });
 });
 
+//routes
+app.use("/api/moviebooking", require("./src/routes/authentication"));
+app.use("/api/confirmation", require("./src/routes/confirmation"));
+
 const PORT = server.port;
 app.listen(PORT, () => {
   log.info("Success: ", `Server started on port ${PORT}`);
