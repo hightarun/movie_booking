@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const log = require("npmlog");
+const { logger } = require("../../config/logger");
 const config = require("config");
 const server = config.get("server");
 const auth = config.get("auth");
@@ -16,10 +16,10 @@ module.exports.confirmEmail = async (req, res) => {
       { _id: decoded.user.id },
       { $set: { isVerified: true } }
     );
-    log.info("Success: ", "Email verified sucessfully");
+    logger.info("Email verified sucessfully");
     return res.redirect(`${server.BASE_FRONT_URL}/login`);
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     return res.status(401).json({ msg: "User not verified" });
   }
   //res.send("User Registered Successfully, Please verify your email to login");

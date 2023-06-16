@@ -1,23 +1,15 @@
-const nodemailer = require("nodemailer");
 const config = require("config");
 const server = config.get("server");
 const auth = config.get("auth");
 const transporter = require("../utils/emailService");
 const bcrypt = require("bcryptjs");
-
 const jwt = require("jsonwebtoken");
-
 const User = require("../models/User");
-
 const inValidUsernames = require("../utils/inValidUsernames");
-const log = require("npmlog");
-
-module.exports.getSignup = (req, res) => {
-  return res.status(401).json({ msg: "Not Authorized" });
-};
+const { logger } = require("../../config/logger");
 
 // Registering new USER
-module.exports.postSignup = async (req, res) => {
+module.exports.addNewUser = async (req, res) => {
   const { username, firstName, lastName, email, password, phone } = req.body;
   try {
     //checking if username is valid
@@ -76,7 +68,7 @@ module.exports.postSignup = async (req, res) => {
       if (err) throw err;
 
       //send confirmation email
-      const confirmationUrl = `${server.BASE_URL}/api/confirmation/${token}`;
+      const confirmationUrl = `${server.BASE_URL}/api/moviebooking/confirmation/${token}`;
       let mailOptions = {
         from: `"Cinema" <${auth.EMAIL_ID}>`,
         to: email,
@@ -93,7 +85,7 @@ module.exports.postSignup = async (req, res) => {
       };
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          console.log(error);
+          logger.error(error);
           return res
             .status(400)
             .json({ errors: [{ msg: "Cofirmation Email not send" }] });
@@ -104,13 +96,13 @@ module.exports.postSignup = async (req, res) => {
       });
     });
   } catch (err) {
-    console.error(err.message);
+    logger.error(err.message);
     res.status(500).send("Server Error");
   }
 };
 
 // Get info about user
-module.exports.getUser = async (req, res) => {
+module.exports.getUserDetails = async (req, res) => {
   try {
     const user = await User.findOne({ username: req.params.username }).select(
       "-password -email -phone"
@@ -120,7 +112,7 @@ module.exports.getUser = async (req, res) => {
     }
     return res.send(user);
   } catch (err) {
-    console.error(err.message);
+    logger.error(err.message);
     res.status(500).send("Server Error");
   }
 };
@@ -151,7 +143,7 @@ module.exports.forgotPassword = async (req, res) => {
     };
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log(error);
+        logger.error(error);
         return res
           .status(400)
           .json({ errors: [{ msg: "Reset code not sent to email" }] });
@@ -161,7 +153,7 @@ module.exports.forgotPassword = async (req, res) => {
       .status(200)
       .send("Reset code has been sent to the registered email");
   } catch (err) {
-    console.error(err.message);
+    logger.error(err.message);
     res.status(500).send("Server Error");
   }
 };
@@ -169,9 +161,7 @@ module.exports.forgotPassword = async (req, res) => {
 module.exports.resetPassword = async (req, res) => {
   const { username, resetCode, newPassword } = req.body;
   try {
-    console.log("ER ", username);
     const user = await User.findOne({ username: username });
-    console.log(user);
     if (!user) {
       return res.send("No User Found");
     }
@@ -181,14 +171,14 @@ module.exports.resetPassword = async (req, res) => {
       user.password = await bcrypt.hash(newPassword, salt);
       await user.save();
       user.passwordResetCode = null;
-      log.info("Success: ", "Password reset successfull");
+      logger.info("Password reset successfull");
       res.send("Password reset sucessfully");
     } else {
-      log.info("Failure: ", "Password reset unsuccessfull");
+      logger.info("Password reset unsuccessfull");
       return res.send("Invalid reset code");
     }
   } catch (err) {
-    console.error(err.message);
+    logger.error(err.message);
     res.status(500).send("Server Error");
   }
 };

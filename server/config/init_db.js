@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const log = require("npmlog");
+const { logger } = require("./logger");
 
 const config = require("config");
 const db = config.get("db");
@@ -9,9 +9,9 @@ const connString = `mongodb://${db.username}:${db.password}@${db.host}:${db.port
 const connectDB = () => {
   try {
     mongoose.connect(connString);
-    log.info("Success: ", `Database connected at port ${db.port}`);
+    logger.info(`Database connected at port ${db.port}`);
   } catch (err) {
-    log.error("Error: ", err.message);
+    logger.error(`Error connecting to database: ${err.message}`);
     process.exit(1);
   }
 };

@@ -3,30 +3,46 @@ const mongoose = require("mongoose");
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
-    trim: true,
-    required: true,
+    min: [3, "Minimum 3 characters are required"],
+    required: [true, "Name is required"],
   },
   username: {
     type: String,
     trim: true,
     unique: true,
-    required: true,
+    min: [3, "Minimum 3 characters are required"],
+    required: [true, "Username is required"],
+  },
+  role: {
+    type: String,
+    enum: {
+      values: ["ADMIN", "USER"],
+      message: "ADMIN and USER are the only valid options",
+    },
+    default: "USER",
   },
   email: {
     type: String,
-    required: true,
     trim: true,
-    unique: true,
+    unique: [true, "Email id must be unique"],
+    required: [true, "Email ID is required"],
   },
   password: {
     type: String,
     trim: true,
-    required: true,
+    min: [6, "Minimum 6 characters are required"],
+    required: [true, "Password is required"],
   },
   phone: {
     type: Number,
     default: null,
-    required: true,
+    validate: {
+      validator: function (v) {
+        return /\d{9,10}/.test(v);
+      },
+      message: `Please enter a valid phone number`,
+    },
+    required: [true, "Contact Number is required"],
   },
   isVerified: {
     type: Boolean,
