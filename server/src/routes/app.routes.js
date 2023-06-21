@@ -39,6 +39,11 @@ const {
   updateTheatre,
   deleteTheatre,
 } = require("../controllers/theatre.controller");
+const {
+  bookTicket,
+  updateTicket,
+  deleteTicket,
+} = require("../controllers/ticket.controller");
 
 // Authentication Routes
 router.post("/register", checkRegister(), validation, addNewUser);
@@ -52,9 +57,9 @@ router.post("/reset", resetPassword);
 
 // Movie Routes
 router.get("/movie/all", getAllMovies);
-//router.post("/:moviename/add", auth, bookTicket);
-//router.put("/:moviename/update/:ticket", auth, updateTicket);
-//router.delete("/:moviename/delete/:ticket", auth, deleteTicket);
+router.post("/:moviename/add", auth, bookTicket);
+router.put("/:moviename/update/:ticket", auth, updateTicket);
+router.delete("/:moviename/delete/:ticket", auth, deleteTicket);
 
 // ADMIN Routes
 router.get("/admin/all-theatre", adminAuth, getAllTheatres);
