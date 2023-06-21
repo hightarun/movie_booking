@@ -16,6 +16,7 @@ const {
   getUserDetails,
   forgotPassword,
   resetPassword,
+  changePassword,
 } = require("../controllers/user.controller");
 const {
   loginUser,
@@ -54,12 +55,13 @@ router.post("/login", checkLogin(), validation, loginUser);
 router.post("/admin", checkLogin(), validation, loginAdmin);
 router.get("/:username/forgot", forgotPassword);
 router.post("/reset", resetPassword);
+router.post("/change-password", changePassword);
 
-// Movie Routes
+// Movie Ticket Routes
 router.get("/movie/all", getAllMovies);
-router.post("/:moviename/add", auth, bookTicket);
-router.put("/:moviename/update/:ticket", auth, updateTicket);
-router.delete("/:moviename/delete/:ticket", auth, deleteTicket);
+router.post("/movie/add", auth, bookTicket);
+router.put("/movie/update/:ticketID", auth, updateTicket);
+router.delete("/movie/delete/:ticketID", auth, deleteTicket);
 
 // ADMIN Routes
 router.get("/admin/all-theatre", adminAuth, getAllTheatres);

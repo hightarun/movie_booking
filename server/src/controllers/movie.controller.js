@@ -84,7 +84,7 @@ module.exports.deleteMovie = async (req, res) => {
 module.exports.addShow = async (req, res) => {
   const { theatreID, movieID, showTime, showPrice } = req.body;
   try {
-    let dt = moment(showTime).toDate();
+    let dt = moment(showTime, "DD-MM-YYYY HH:mm:ss").toDate();
     let show = new Show({
       theatreID: theatreID,
       movieID: movieID,
@@ -108,7 +108,7 @@ module.exports.updateShow = async (req, res) => {
     if (!show) {
       return res.status(404).send("Movie not found");
     }
-    let dt = moment(showTime).toDate();
+    let dt = moment(showTime, "DD-MM-YYYY HH:mm:ss").toDate();
     (show.theatreID = theatreID),
       (show.movieID = movieID),
       (show.showTime = dt),

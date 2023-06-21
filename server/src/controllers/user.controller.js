@@ -172,11 +172,35 @@ module.exports.resetPassword = async (req, res) => {
       await user.save();
       user.passwordResetCode = null;
       logger.info("Password reset successfull");
-      res.send("Password reset sucessfully");
+      res.status(200).send("Password reset sucessfully");
     } else {
       logger.info("Password reset unsuccessfull");
-      return res.send("Invalid reset code");
+      return res.status(401).send("Invalid reset code");
     }
+  } catch (err) {
+    logger.error(err.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+module.exports.changePassword = async (req, res) => {
+  const { username, currentPassword, newPassword } = req.body;
+  try {
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      return res.send("No user found by this username");
+    }
+    //matching the password with hashed password in user database
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ errors: [{ msg: "Invalid credentials" }] });
+    }
+    //Encrypt password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+    logger.info("Password changed successfull");
+    return res.status(200).send("Password changed sucessfully");
   } catch (err) {
     logger.error(err.message);
     res.status(500).send("Server Error");

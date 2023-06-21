@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const TicketSchema = new mongoose.Schema({
-  userId: {
+  userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
     required: [true, "User Id is required"],
@@ -14,7 +14,7 @@ const TicketSchema = new mongoose.Schema({
   noOfTickets: {
     type: Number,
     default: null,
-    required: [true, "numberOfTickets is required"],
+    required: [true, "Number of ticket is required"],
   },
   seatsBooked: {
     type: [String],
