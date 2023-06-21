@@ -2,3 +2,7 @@ server/config/*.json
 
 server/node_modules
 client/node_modules
+
+server/logs
+
+*/node_modules
