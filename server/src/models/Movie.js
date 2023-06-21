@@ -16,12 +16,12 @@ const MovieSchema = new mongoose.Schema({
   },
   bookingStatus: {
     type: Boolean,
-    required: true,
+    required: [true, "Booking status is required"],
   },
   releaseDate: {
     type: Date,
     default: null,
-    required: true,
+    required: [true, "Release date is required"],
   },
 });
 

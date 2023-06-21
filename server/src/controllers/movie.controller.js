@@ -3,7 +3,9 @@ const server = config.get("server");
 const auth = config.get("auth");
 const User = require("../models/User");
 const Movie = require("../models/Movie");
+const Show = require("../models/Show");
 const { logger } = require("../../config/logger");
+const moment = require("moment");
 
 module.exports.getAllMovies = async (req, res) => {
   try {
@@ -15,60 +17,10 @@ module.exports.getAllMovies = async (req, res) => {
   }
 };
 
-module.exports.bookTicket = async (req, res) => {
-  try {
-    const user = await User.findOne({ username: req.params.username }).select(
-      "-password -email -phone"
-    );
-    if (!user) {
-      return res.send("No User Found");
-    }
-    return res.send(user);
-  } catch (err) {
-    logger.error(err.message);
-    res.status(500).send("Server Error");
-  }
-};
-
-module.exports.updateTicket = async (req, res) => {
-  try {
-    const user = await User.findOne({ username: req.params.username }).select(
-      "-password -email -phone"
-    );
-    if (!user) {
-      return res.send("No User Found");
-    }
-    return res.send(user);
-  } catch (err) {
-    logger.error(err.message);
-    res.status(500).send("Server Error");
-  }
-};
-
-module.exports.deleteTicket = async (req, res) => {
-  try {
-    let movie = await Movie.findOne({
-      movieName: req.params.moviename,
-    });
-    if (!movie) {
-      return res.status(404).send("Movie not found");
-    }
-    return res.status(200).send("Movie deleted successfully");
-  } catch (err) {
-    logger.error(err.message);
-    res.status(500).send("Server Error");
-  }
-};
-
 module.exports.addNewMovie = async (req, res) => {
   const { movieFullName, bookingStatus, releaseDate } = req.body;
   try {
-    let dateParts = releaseDate.split("-");
-    let dt = new Date(
-      parseInt(dateParts[2], 10),
-      parseInt(dateParts[1], 10),
-      parseInt(dateParts[0], 10)
-    );
+    let dt = moment(releaseDate).toDate();
     let movie = new Movie({
       movieFullName: movieFullName,
       movieName: movieFullName.replaceAll(" ", "").toLowerCase(),
@@ -123,6 +75,62 @@ module.exports.deleteMovie = async (req, res) => {
     await movie.deleteOne();
     logger.info("Movie removed successfully");
     return res.status(200).send("Movie deleted successfully");
+  } catch (err) {
+    logger.error(err.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+module.exports.addShow = async (req, res) => {
+  const { theatreID, movieID, showTime, showPrice } = req.body;
+  try {
+    let dt = moment(showTime).toDate();
+    let show = new Show({
+      theatreID: theatreID,
+      movieID: movieID,
+      showTime: dt,
+      showPrice: showPrice,
+    });
+    await show.save();
+    logger.info("Show added successfully");
+    return res.status(200).send("Show added successfully");
+  } catch (err) {
+    logger.error(err.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+module.exports.updateShow = async (req, res) => {
+  const { theatreID, movieID, showTime, showPrice } = req.body;
+
+  try {
+    let show = Show.findById(req.params.showID);
+    if (!show) {
+      return res.status(404).send("Movie not found");
+    }
+    let dt = moment(showTime).toDate();
+    (show.theatreID = theatreID),
+      (show.movieID = movieID),
+      (show.showTime = dt),
+      (show.showPrice = showPrice),
+      await show.save();
+    logger.info("Show updated successfully");
+    return res.status(200).send("Show updated successfully");
+  } catch (err) {
+    logger.error(err.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+module.exports.deleteShow = async (req, res) => {
+  try {
+    let show = await Show.findById(req.params.showID);
+    if (!show) {
+      return res.status(404).send("Show not found");
+    }
+    await show.deleteOne();
+    logger.info("Show removed successfully");
+    return res.status(200).send("Show deleted successfully");
   } catch (err) {
     logger.error(err.message);
     res.status(500).send("Server Error");

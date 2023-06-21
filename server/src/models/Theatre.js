@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const TheatreSchema = new mongoose.Schema({
   theatreNo: {
     type: String,
+    unique: true,
     required: [true, "Theatre no. is required"],
   },
   totalSeats: {

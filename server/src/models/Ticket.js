@@ -3,28 +3,13 @@ const mongoose = require("mongoose");
 const TicketSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "UserData",
+    ref: "user",
     required: [true, "User Id is required"],
   },
-  movieName: {
+  showDetails: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Movie",
-    required: [true, "Movie name is required"],
-  },
-  theatreNo: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: [true, "Theatre name is required"],
-    ref: "Theatre",
-  },
-  movieDateTime: {
-    type: Date,
-    default: null,
-    required: [true, "Movie Date and time is required"],
-  },
-  ticketPrice: {
-    type: String,
-    default: null,
-    required: [true, "Ticket price is required"],
+    ref: "show",
+    required: [true, "Show details are required"],
   },
   noOfTickets: {
     type: Number,

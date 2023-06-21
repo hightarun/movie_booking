@@ -26,11 +26,11 @@ const { confirmEmail } = require("../controllers/confirmation.controller");
 const {
   getAllMovies,
   addNewMovie,
-  bookTicket,
-  updateTicket,
-  deleteTicket,
   updateMovie,
   deleteMovie,
+  addShow,
+  updateShow,
+  deleteShow,
 } = require("../controllers/movie.controller");
 
 const {
@@ -52,9 +52,9 @@ router.post("/reset", resetPassword);
 
 // Movie Routes
 router.get("/movie/all", getAllMovies);
-router.post("/:moviename/add", auth, bookTicket);
-router.put("/:moviename/update/:ticket", auth, updateTicket);
-router.delete("/:moviename/delete/:ticket", auth, deleteTicket);
+//router.post("/:moviename/add", auth, bookTicket);
+//router.put("/:moviename/update/:ticket", auth, updateTicket);
+//router.delete("/:moviename/delete/:ticket", auth, deleteTicket);
 
 // ADMIN Routes
 router.get("/admin/all-theatre", adminAuth, getAllTheatres);
@@ -64,6 +64,9 @@ router.delete("/admin/delete-movie/:moviename", adminAuth, deleteMovie);
 router.post("/admin/add-theatre", adminAuth, addNewTheatre);
 router.put("/admin/update-theatre/:theatre", adminAuth, updateTheatre);
 router.delete("/admin/delete-theatre/:theatre", adminAuth, deleteTheatre);
+router.post("/admin/add-show", adminAuth, addShow);
+router.put("/admin/update-show/:showID", adminAuth, updateShow);
+router.delete("/admin/delete-show/:showID", adminAuth, deleteShow);
 
 //If the path is not found then
 router.all("/*", async (req, res) => {
