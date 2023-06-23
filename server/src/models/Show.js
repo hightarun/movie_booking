@@ -13,9 +13,13 @@ const ShowSchema = new mongoose.Schema({
     sparse: true,
     ref: "movie",
   },
-  showTime: {
+  showStartTime: {
     type: Date,
-    required: [true, "Show timing is required"],
+    required: [true, "Show start time is required"],
+  },
+  showEndTime: {
+    type: Date,
+    required: [true, "Show end time is required"],
   },
   showPrice: {
     type: String,

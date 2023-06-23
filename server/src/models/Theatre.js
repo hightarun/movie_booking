@@ -10,10 +10,15 @@ const TheatreSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Total seat number is required"],
   },
-  availableSeats: {
-    type: Number,
-    required: [true, "Number of seats available is required"],
-  },
+  showSeatDetails: [
+    {
+      showID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "show",
+      },
+      seatsAvailable: { type: Number },
+    },
+  ],
 });
 
 module.exports = Theatre = mongoose.model("theatre", TheatreSchema);

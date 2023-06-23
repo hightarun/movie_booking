@@ -22,7 +22,7 @@ module.exports.addNewTheatre = async (req, res) => {
     let theatre = new Theatre({
       theatreNo: theatreNo,
       totalSeats: totalSeats,
-      availableSeats: totalSeats,
+      showSeatDetails: [],
     });
     await theatre.save();
     logger.info("Theatre added successfully");
@@ -45,7 +45,7 @@ module.exports.updateTheatre = async (req, res) => {
     }
     theatre.theatreNo = theatreNo;
     theatre.totalSeats = totalSeats;
-    theatre.availableSeats = availableSeats;
+    theatre.availableSeats = [];
     await theatre.save();
     logger.info("Theatre updated successfully");
     return res.status(200).send("Theatre updated successfully");

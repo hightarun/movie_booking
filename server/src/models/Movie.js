@@ -14,6 +14,11 @@ const MovieSchema = new mongoose.Schema({
     trim: true,
     required: [true, "Movie Name is required"],
   },
+  movieLength: {
+    type: String,
+    default: "03:00",
+    required: [true, "Movie length is required"],
+  },
   bookingStatus: {
     type: Boolean,
     required: [true, "Booking status is required"],

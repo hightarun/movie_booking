@@ -32,6 +32,7 @@ const {
   addShow,
   updateShow,
   deleteShow,
+  searchMovie,
 } = require("../controllers/movie.controller");
 
 const {
@@ -60,6 +61,7 @@ router.post("/change-password", changePassword);
 // Movie Ticket Routes
 router.get("/movie/all", getAllMovies);
 router.post("/movie/add", auth, bookTicket);
+router.get("/movie/search/:query", searchMovie);
 router.put("/movie/update/:ticketID", auth, updateTicket);
 router.delete("/movie/delete/:ticketID", auth, deleteTicket);
 
