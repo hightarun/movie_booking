@@ -118,7 +118,6 @@ module.exports.addShow = async (req, res) => {
         .status(200)
         .send("Invalid, show timing is before release time");
     }
-
     if (theatre.showSeatDetails.length > 0) {
       return theatre.showSeatDetails.forEach(async (seatsAvailable, index) => {
         let show = await Show.findById(seatsAvailable.showID);
@@ -155,7 +154,7 @@ module.exports.addShow = async (req, res) => {
           theatre.showSeatDetails.unshift(showSeatDetail);
           await theatre.save();
           logger.info("Seats updated successfully");
-          return res.status(200).send("Show updated successfully");
+          return res.status(200).send("Show added successfully");
         } else if (isBetween) {
           return res.status(200).send("Theatre occupied");
         } else if (isConflictingPreviousMovie) {
@@ -187,87 +186,17 @@ module.exports.addShow = async (req, res) => {
   }
 };
 
-module.exports.updateShow = async (req, res) => {
-  const { theatreID, movieID, showStartTime, showPrice } = req.body;
-  try {
-    let movie = await Movie.findById(movieID);
-    let theatre = await Theatre.findById(theatreID);
-    let showStartTimeISO = moment(showStartTime, "DD-MM-YYYY HH:mm:ss")
-      .local()
-      .format();
-    let [h, m] = movie.movieLength.split(":");
-    let movieLength = +h + m / 60;
-    let showEndTimeISO = moment(showStartTimeISO)
-      .add(moment.duration(movieLength, "hours"))
-      .local()
-      .format();
-
-    let movieReleaseDate = moment(movie.releaseDate).local().format();
-    let checkReleaseDate = isAfter(movieReleaseDate, showStartTimeISO);
-    const showFound = Show.findById(req.params.showID);
-    if (!showFound) {
-      return res.status(200).send("No Show found");
-    }
-    if (checkReleaseDate) {
-      seatCheckFlag = false;
-      return res
-        .status(200)
-        .send("Invalid, show timing is before release time");
-    }
-
-    // now check if theatre is unoccupied
-    return theatre.showSeatDetails.forEach(async (seatsAvailable, index) => {
-      let show = await Show.findById(seatsAvailable.showID);
-      let showStartTime = moment(show.showStartTime).local().format();
-      let showEndTime = moment(show.showEndTime).local().format();
-      let isBetween = isBetweenTwoDateTime(
-        showStartTimeISO,
-        showStartTime,
-        showEndTime
-      );
-
-      let movieDuration = durationBetween(showStartTime, showEndTime);
-      let durationBetweenPreviousMovie = durationBetween(
-        showEndTime,
-        showStartTimeISO
-      );
-      let isConflictingPreviousMovie =
-        durationBetweenPreviousMovie < movieDuration + 0.5 &&
-        durationBetweenPreviousMovie > 0;
-
-      if (!isBetween && !isConflictingPreviousMovie) {
-        showFound.theatreID = theatreID;
-        showFound.movieID = movieID;
-        showFound.showStartTime = showStartTimeISO;
-        showFound.showEndTime = showEndTimeISO;
-        showFound.showPrice = showPrice;
-        await show.save();
-        return res.status(200).send("Show updated successfully");
-      } else if (isBetween) {
-        return res.status(200).send("Theatre occupied");
-      } else if (isConflictingPreviousMovie) {
-        return res.status(200).send("Theatre occupied");
-      } else {
-        return;
-      }
-    });
-  } catch (err) {
-    logger.error(err);
-    res.status(500).send("Server Error");
-  }
-};
-
-module.exports.deleteShow = async (req, res) => {
-  try {
-    let show = await Show.findById(req.params.showID);
-    if (!show) {
-      return res.status(404).send("Show not found");
-    }
-    await show.deleteOne();
-    logger.info("Show removed successfully");
-    return res.status(200).send("Show deleted successfully");
-  } catch (err) {
-    logger.error(err.message);
-    res.status(500).send("Server Error");
-  }
-};
+// module.exports.deleteShow = async (req, res) => {
+//   try {
+//     let show = await Show.findById(req.params.showID);
+//     if (!show) {
+//       return res.status(404).send("Show not found");
+//     }
+//     await show.deleteOne();
+//     logger.info("Show removed successfully");
+//     return res.status(200).send("Show deleted successfully");
+//   } catch (err) {
+//     logger.error(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// };

@@ -20,6 +20,10 @@ const TicketSchema = new mongoose.Schema({
     type: [String],
     required: [true, "Seat Numbers are required"],
   },
+  totalTicketPrice: {
+    type: Number,
+    required: [true, "Total Ticket price is required"],
+  },
 });
 
 module.exports = Ticket = mongoose.model("ticket", TicketSchema);

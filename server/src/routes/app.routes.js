@@ -30,7 +30,6 @@ const {
   updateMovie,
   deleteMovie,
   addShow,
-  updateShow,
   deleteShow,
   searchMovie,
 } = require("../controllers/movie.controller");
@@ -74,8 +73,6 @@ router.post("/admin/add-theatre", adminAuth, addNewTheatre);
 router.put("/admin/update-theatre/:theatre", adminAuth, updateTheatre);
 router.delete("/admin/delete-theatre/:theatre", adminAuth, deleteTheatre);
 router.post("/admin/add-show", adminAuth, addShow);
-router.put("/admin/update-show/:showID", adminAuth, updateShow);
-router.delete("/admin/delete-show/:showID", adminAuth, deleteShow);
 
 //If the path is not found then
 router.all("/*", async (req, res) => {

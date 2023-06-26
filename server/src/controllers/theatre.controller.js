@@ -34,7 +34,7 @@ module.exports.addNewTheatre = async (req, res) => {
 };
 
 module.exports.updateTheatre = async (req, res) => {
-  const { theatreNo, totalSeats, availableSeats } = req.body;
+  const { theatreNo, totalSeats } = req.body;
   try {
     console.log(req.params.theatre);
     let theatre = await Theatre.findOne({
