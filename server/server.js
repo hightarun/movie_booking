@@ -9,7 +9,7 @@ const helmet = require("helmet");
 const { logger } = require("./config/logger");
 const connectDB = require("./config/init_db");
 const app = express();
-const server = config.get("server");
+const serverEnv = config.get("server");
 
 app.use(cors(corsOptions));
 app.use(helmet({ crossOriginResourcePolicy: false }));
@@ -32,7 +32,9 @@ app.get("/*", (req, res) => {
 const errorHandler = require("./src/middlewares/error.middleware");
 app.use(errorHandler);
 
-const PORT = server.port;
-app.listen(PORT, () => {
+const PORT = serverEnv.port;
+const server = app.listen(PORT, () => {
   logger.info(`Server started on port ${PORT}`);
 });
+
+module.exports = server;

@@ -26,7 +26,9 @@ module.exports.addNewTheatre = async (req, res) => {
     });
     await theatre.save();
     logger.info("Theatre added successfully");
-    return res.status(200).send("Theatre added successfully");
+    return res
+      .status(200)
+      .json({ message: "Theatre added successfully", theatreID: theatre._id });
   } catch (err) {
     logger.error(err.message);
     res.status(500).send("Server Error");

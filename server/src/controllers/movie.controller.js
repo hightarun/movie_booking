@@ -16,7 +16,7 @@ const {
 module.exports.getAllMovies = async (req, res) => {
   try {
     const movies = await Movie.find().sort({ releaseDate: -1 });
-    return res.json(movies);
+    return res.status(200).json(movies);
   } catch (err) {
     logger.error(err.message);
     res.status(500).send("Server Error");
@@ -48,7 +48,9 @@ module.exports.addNewMovie = async (req, res) => {
     });
     await movie.save();
     logger.info("Movie added successfully");
-    return res.status(200).send("Movie added successfully");
+    return res
+      .status(200)
+      .json({ message: "Movie added successfully", movieID: movie._id });
   } catch (err) {
     logger.error(err.message);
     res.status(500).send("Server Error");
@@ -178,7 +180,9 @@ module.exports.addShow = async (req, res) => {
       theatre.showSeatDetails.unshift(showSeatDetail);
       await theatre.save();
       logger.info("Seats updated successfully");
-      return res.status(200).send("Show added successfully");
+      return res
+        .status(200)
+        .json({ message: "Show added successfully", showID: show._id });
     }
   } catch (err) {
     logger.error(err);

@@ -56,45 +56,57 @@ module.exports.addNewUser = async (req, res) => {
     user.password = await bcrypt.hash(password, salt);
     await user.save();
 
-    //user id as payload
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
+    if (process.env.NODE_ENV == "test") {
+      user.isVerified = true;
+      await user.save();
+      return res
+        .status(200)
+        .send(
+          "User Registered Successfully, Please verify your email to login"
+        );
+    } else {
+      //user id as payload
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
 
-    //jwt signing the user id and sending token for email verification
-    jwt.sign(payload, auth.JWT_SECRET, { expiresIn: 86400 }, (err, token) => {
-      if (err) throw err;
+      //jwt signing the user id and sending token for email verification
+      jwt.sign(payload, auth.JWT_SECRET, { expiresIn: 86400 }, (err, token) => {
+        if (err) throw err;
 
-      //send confirmation email
-      const confirmationUrl = `${server.BASE_URL}/api/moviebooking/confirmation/${token}`;
-      let mailOptions = {
-        from: `"Cinema" <${auth.EMAIL_ID}>`,
-        to: email,
-        subject: "Email Verification for Cinema",
-        text: `Hi ${username}, please confirm your email
+        //send confirmation email
+        const confirmationUrl = `${server.BASE_URL}/api/moviebooking/confirmation/${token}`;
+        let mailOptions = {
+          from: `"Cinema" <${auth.EMAIL_ID}>`,
+          to: email,
+          subject: "Email Verification for Cinema",
+          text: `Hi ${username}, please confirm your email
                  by clicking on the link.`,
-        html: `<h2>Hi, ${username}</h2>
+          html: `<h2>Hi, ${username}</h2>
                  <br/>
                  <p>Thank you for registering</p>
                  <br/>
                  <p>Please click here to verify your Email</p>
                  <h1><a href="${confirmationUrl}" target="_blank">here</a></h1>
                  `,
-      };
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          logger.error(error);
-          return res
-            .status(400)
-            .json({ errors: [{ msg: "Cofirmation Email not send" }] });
-        }
-        res.send(
-          "User Registered Successfully, Please verify your email to login"
-        );
+        };
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            logger.error(error);
+            return res
+              .status(400)
+              .json({ errors: [{ msg: "Cofirmation Email not send" }] });
+          }
+          res
+            .status(200)
+            .send(
+              "User Registered Successfully, Please verify your email to login"
+            );
+        });
       });
-    });
+    }
   } catch (err) {
     logger.error(err.message);
     res.status(500).send("Server Error");

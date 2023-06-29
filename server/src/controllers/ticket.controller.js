@@ -37,6 +37,7 @@ module.exports.bookTicket = async (req, res) => {
         if (seatsAvailable >= noOfTickets) {
           return res.status(200).send("No seats available");
         }
+
         let totalTicketPrice = shows.showPrice * noOfTickets;
         let ticket = new Ticket({
           userID: req.user.id,
@@ -50,7 +51,9 @@ module.exports.bookTicket = async (req, res) => {
         show.seatsAvailable = show.seatsAvailable - noOfTickets;
         await theatre.save();
         logger.info("Available seats updated successfully");
-        return res.status(200).send("Ticket Booked!!");
+        return res
+          .status(200)
+          .json({ message: "Ticket Booked!!", ticketID: ticket._id });
       }
     });
   } catch (err) {
@@ -115,6 +118,15 @@ module.exports.deleteTicket = async (req, res) => {
       logger.error("Ticket not found");
       return res.status(404).send("Ticket not found");
     }
+    const show = await Show.findById(ticket.showDetails);
+    const theatre = await Theatre.findById(show.theatreID);
+    theatre.showSeatDetails.forEach(async (sho) => {
+      if (sho.showID.equals(ticket.showDetails)) {
+        sho.seatsAvailable = sho.seatsAvailable + ticket.noOfTickets;
+        await theatre.save();
+        logger.info("Theatre seats updated");
+      }
+    });
     await ticket.deleteOne();
     logger.info("Ticket removed successfully");
     return res.status(200).send("Ticket deleted successfully");
