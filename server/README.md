@@ -1,12 +1,12 @@
-### MOVIE BOOKING APP - Backend
+# MOVIE BOOKING APP - Backend
 
 add json config files in config folder.
 
-$yarn install
-$yarn test
-$yarn server
+- yarn install
+- yarn test
+- yarn server
 
-# development.json
+### development.json
 
 ```
 {
@@ -32,7 +32,7 @@ $yarn server
 }
 ```
 
-# test.json
+### test.json
 
 ```
 {
