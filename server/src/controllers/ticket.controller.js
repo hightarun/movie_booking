@@ -93,14 +93,16 @@ module.exports.updateTicket = async (req, res) => {
         if (seatsAvailable >= noOfTickets) {
           return res.status(200).send("No seats available");
         }
+        updatedSeats = show.seatsAvailable + ticket.noOfTickets;
+        show.seatsAvailable = updatedSeats - noOfTickets;
+        await theatre.save();
         let totalTicketPrice = shows.showPrice * noOfTickets;
         ticket.noOfTickets = noOfTickets;
         ticket.seatsBooked = seatsBooked;
         ticket.totalTicketPrice = totalTicketPrice;
-        //await ticket.save();
+        await ticket.save();
         logger.info("Ticket updated successfully");
-        show.seatsAvailable = show.seatsAvailable - noOfTickets;
-        //await theatre.save();
+
         logger.info("Available seats updated successfully");
         return res.status(200).send("Ticket Updated!!");
       }
