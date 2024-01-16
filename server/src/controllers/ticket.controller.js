@@ -11,102 +11,50 @@ const Show = require("../models/Show");
 const { isBetweenTwoDateTime } = require("../utils/momentHelpers");
 
 module.exports.bookTicket = async (req, res) => {
-  const { showDetails, noOfTickets, seatsBooked } = req.body;
+  const { showId, noOfTickets } = req.body;
   try {
-    const SEATS_REGEX = /^[A-Z][1-9][0-9]$|^[A-Z]0?[1-9]$/;
-    await seatsBooked.forEach((seat) => {
-      if (!SEATS_REGEX.test(seat)) {
-        return res.status(422).send("Seat number is invalid");
-      }
-    });
-
-    if (noOfTickets != seatsBooked.length) {
-      return res
-        .status(422)
-        .send("No of tickets mismatches number of seats booked");
-    }
-    let shows = await Show.findById(showDetails);
-    if (!shows) {
+    let show = await Show.findById(showId);
+    if (!show) {
       return res.status(200).send("No show found ");
     }
-    let theatre = await Theatre.findById(shows.theatreID);
 
-    return theatre.showSeatDetails.forEach(async (show) => {
-      if (show.showID == showDetails) {
-        let seatsAvailable = theatre.totalSeats - show.seatsAvailable;
-        if (seatsAvailable >= noOfTickets) {
-          return res.status(200).send("No seats available");
-        }
+    let theatre = await Theatre.findById(show.theatreID);
+    if (theatre.totalSeats <= noOfTickets) {
+      return res.status(200).send("No seats available");
+    }
 
-        let totalTicketPrice = shows.showPrice * noOfTickets;
-        let ticket = new Ticket({
-          userID: req.user.id,
-          showDetails: showDetails,
-          noOfTickets: noOfTickets,
-          seatsBooked: seatsBooked,
-          totalTicketPrice: totalTicketPrice,
-        });
-        await ticket.save();
-        logger.info("Ticket booked successfully");
-        show.seatsAvailable = show.seatsAvailable - noOfTickets;
-        await theatre.save();
-        logger.info("Available seats updated successfully");
-        return res
-          .status(200)
-          .json({ message: "Ticket Booked!!", ticketID: ticket._id });
-      }
+    let totalTicketPrice = show.showPrice * noOfTickets;
+
+    let ticket = new Ticket({
+      userID: req.user.id,
+      showID: showId,
+      noOfTickets: noOfTickets,
+      totalTicketPrice: totalTicketPrice,
     });
+    await ticket.save();
+    logger.info("Ticket booked successfully");
+
+    // updating theatre seats
+    theatre.totalSeats = theatre.totalSeats - noOfTickets;
+    await theatre.save();
+    logger.info("Available seats updated successfully");
+
+    return res
+      .status(200)
+      .json({ message: "Ticket Booked!!", ticketID: ticket._id });
   } catch (err) {
     logger.error(err.message);
     res.status(500).send("Server Error");
   }
 };
 
-module.exports.updateTicket = async (req, res) => {
-  const { noOfTickets, seatsBooked } = req.body;
+module.exports.getTickets = async (req, res) => {
   try {
-    let ticket = await Ticket.findById(req.params.ticketID);
-    if (!ticket) {
-      return res.status(200).send("Ticket not found");
-    }
-    const SEATS_REGEX = /^[A-Z][1-9][0-9]$|^[A-Z]0?[1-9]$/;
-    await seatsBooked.forEach((seat) => {
-      if (!SEATS_REGEX.test(seat)) {
-        return res.status(422).send("Seat number is invalid");
-      }
-    });
-    if (noOfTickets != seatsBooked.length) {
-      return res
-        .status(422)
-        .send("No of tickets mismatches number of seats booked");
-    }
-
-    let shows = await Show.findById(ticket.showDetails);
-    if (!shows) {
-      return res.status(200).send("No show found ");
-    }
-    let theatre = await Theatre.findById(shows.theatreID);
-
-    return theatre.showSeatDetails.forEach(async (show) => {
-      if (show.showID.equals(ticket.showDetails)) {
-        let seatsAvailable = theatre.totalSeats - show.seatsAvailable;
-        if (seatsAvailable >= noOfTickets) {
-          return res.status(200).send("No seats available");
-        }
-        updatedSeats = show.seatsAvailable + ticket.noOfTickets;
-        show.seatsAvailable = updatedSeats - noOfTickets;
-        await theatre.save();
-        let totalTicketPrice = shows.showPrice * noOfTickets;
-        ticket.noOfTickets = noOfTickets;
-        ticket.seatsBooked = seatsBooked;
-        ticket.totalTicketPrice = totalTicketPrice;
-        await ticket.save();
-        logger.info("Ticket updated successfully");
-
-        logger.info("Available seats updated successfully");
-        return res.status(200).send("Ticket Updated!!");
-      }
-    });
+    const tickets = await Ticket.find({ userID: req.user.id })
+      .populate({ path: "userID", select: "_id name username" })
+      .populate({ path: "showID", populate: { path: "theatreID movieID" } })
+      .exec();
+    return res.status(200).json(tickets);
   } catch (err) {
     logger.error(err.message);
     res.status(500).send("Server Error");
@@ -120,15 +68,16 @@ module.exports.deleteTicket = async (req, res) => {
       logger.error("Ticket not found");
       return res.status(404).send("Ticket not found");
     }
-    const show = await Show.findById(ticket.showDetails);
+    const show = await Show.findById(ticket.showId);
     const theatre = await Theatre.findById(show.theatreID);
-    theatre.showSeatDetails.forEach(async (sho) => {
-      if (sho.showID.equals(ticket.showDetails)) {
-        sho.seatsAvailable = sho.seatsAvailable + ticket.noOfTickets;
-        await theatre.save();
-        logger.info("Theatre seats updated");
-      }
-    });
+
+    // updating theatre seats
+    if (theatre.showID.equals(ticket.showId)) {
+      theatre.totalSeats = theatre.totalSeats + ticket.noOfTickets;
+      await theatre.save();
+      logger.info("Theatre seats updated");
+    }
+
     await ticket.deleteOne();
     logger.info("Ticket removed successfully");
     return res.status(200).send("Ticket deleted successfully");

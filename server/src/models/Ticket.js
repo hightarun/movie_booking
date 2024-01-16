@@ -6,7 +6,7 @@ const TicketSchema = new mongoose.Schema({
     ref: "user",
     required: [true, "User Id is required"],
   },
-  showDetails: {
+  showID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "show",
     required: [true, "Show details are required"],
@@ -15,10 +15,6 @@ const TicketSchema = new mongoose.Schema({
     type: Number,
     default: null,
     required: [true, "Number of ticket is required"],
-  },
-  seatsBooked: {
-    type: [String],
-    required: [true, "Seat Numbers are required"],
   },
   totalTicketPrice: {
     type: Number,
