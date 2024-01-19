@@ -6,7 +6,7 @@ const Footer = () => {
     <div className={styles.container}>
       <div className={styles.foot}>
         <p>
-          Copyright <strong>&#xA9;</strong> Tweets
+          Copyright <strong>&#xA9;</strong> MovieB
         </p>
       </div>
     </div>

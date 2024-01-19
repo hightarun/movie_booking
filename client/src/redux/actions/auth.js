@@ -20,8 +20,32 @@ export const loadUser = () => async (dispatch) => {
   }
   try {
     if (localStorage.token) {
+      const res = await axios.get(`${process.env.REACT_APP_BACKEND}/authorize`);
+      dispatch({
+        type: USER_LOADED,
+        payload: res.data,
+      });
+      if (res.data) {
+        dispatch({
+          type: AUTH_SUCCESS,
+        });
+      }
+    }
+  } catch (err) {
+    dispatch({
+      type: AUTH_ERROR,
+    });
+  }
+};
+// Load admin
+export const loadAdmin = () => async (dispatch) => {
+  if (localStorage.token) {
+    setAuthToken(localStorage.token);
+  }
+  try {
+    if (localStorage.token) {
       const res = await axios.get(
-        `${process.env.REACT_APP_TWEETS_BACKEND}/authorize`
+        `${process.env.REACT_APP_BACKEND}/authorize-admin`
       );
       dispatch({
         type: USER_LOADED,
@@ -39,7 +63,6 @@ export const loadUser = () => async (dispatch) => {
     });
   }
 };
-
 //Login User
 export const loginUser = (emailOrUname, password) => async (dispatch) => {
   const body = JSON.stringify({ emailOrUname, password });
@@ -56,13 +79,34 @@ export const loginUser = (emailOrUname, password) => async (dispatch) => {
     });
     dispatch(setAlert("Message", "User login successfull", "success"));
   } catch (err) {
-    const errors = err.response.data.errorMap; // errors array from backend
+    dispatch(
+      setAlert("Not Authorized", "Invalid username or password", "danger")
+    );
+    dispatch({
+      type: LOGIN_FAIL,
+    });
+  }
+};
 
-    if (errors) {
-      Object.keys(errors).map((key, index) => {
-        return dispatch(setAlert(key, errors[key], "danger"));
-      });
-    }
+//Login admin
+export const loginAdmin = (emailOrUname, password) => async (dispatch) => {
+  const body = JSON.stringify({ emailOrUname, password });
+  try {
+    const res = await axios({
+      method: "post",
+      url: `${process.env.REACT_APP_BACKEND}/admin`,
+      headers: { "Content-Type": "application/json" },
+      data: body,
+    });
+    dispatch({
+      type: LOGIN_SUCCESS,
+      payload: res.data,
+    });
+    dispatch(setAlert("Message", "Admin login successfull", "success"));
+  } catch (err) {
+    dispatch(
+      setAlert("Not Authorized", "Invalid username or password", "danger")
+    );
     dispatch({
       type: LOGIN_FAIL,
     });
@@ -74,7 +118,7 @@ export const registerUser = (user) => async (dispatch) => {
   try {
     const res = await axios({
       method: "post",
-      url: `${process.env.REACT_APP_TWEETS_BACKEND}/register`,
+      url: `${process.env.REACT_APP_BACKEND}/register`,
       headers: { "Content-Type": "application/json" },
       data: body,
     });

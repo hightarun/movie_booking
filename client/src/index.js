@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import store from "./redux/store";
@@ -14,6 +14,11 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Users from "./pages/Users";
+import Loader from "./components/Loader";
+
+const BookTicket = lazy(() => import("./pages/BookTicket"));
+const AdminLogin = lazy(() => import("./pages/Admin-login"));
+const AdminPanel = lazy(() => import("./pages/Admin-panel"));
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -21,13 +26,18 @@ const root = createRoot(container);
 root.render(
   <Provider store={store}>
     <BrowserRouter forceRefresh={true}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route exact path="/user/:userid" element={<Users />} />
-        <Route path="*" element={<Home />} />
-      </Routes>
+      <Suspense fallback={Loader}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin-panel" element={<AdminPanel />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/book-ticket" element={<BookTicket />} />
+          <Route exact path="/user/:userid" element={<Users />} />
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   </Provider>
 );

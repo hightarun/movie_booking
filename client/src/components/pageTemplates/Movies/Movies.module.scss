@@ -1,0 +1,71 @@
+.container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  object-fit: cover;
+  background-size: cover;
+  background-position: center;
+  aspect-ratio: 16/10;
+  width: 100vw;
+  h2 {
+    font-size: 2rem;
+  }
+  .wrap {
+    width: 100%;
+    height: fit-content;
+    .movieContainer {
+      display: flex;
+      flex-wrap: wrap;
+      flex: 1 1 100%;
+      justify-content: space-evenly;
+      align-items: center;
+      height: fit-content;
+      .movie {
+        margin: 5px;
+        padding: 10px;
+        width: fit-content;
+        border-radius: 10px;
+        background: linear-gradient(to top left, #28b487, #7dd56f);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 2px 4px 0 rgb(0, 0, 0, 0.8);
+        div {
+          display: flex;
+          justify-content: space-between;
+        }
+        p {
+          margin: 5px;
+          padding: 0px 10px;
+          font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+          font-size: 1.1rem;
+          color: black;
+          width: 100%;
+        }
+        button {
+          margin-top: 5px;
+          color: white;
+          align-self: center;
+          background-color: crimson;
+          border-style: none;
+          cursor: pointer;
+          outline: none;
+          text-decoration: none;
+          border-radius: 10px;
+          padding: 8px;
+          height: fit-content;
+          width: fit-content;
+          &:hover {
+            background-color: royalblue;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .container {
+    aspect-ratio: 9/16;
+  }
+}

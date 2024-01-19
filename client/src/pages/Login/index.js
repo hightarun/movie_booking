@@ -95,7 +95,6 @@ const Login = () => {
       setForgotModal(false);
     } catch (err) {
       const errors = err.response.data.errorMap; // errors array from backend
-
       if (errors) {
         Object.keys(errors).map((key, index) => {
           return dispatch(setAlert(key, errors[key], "danger"));

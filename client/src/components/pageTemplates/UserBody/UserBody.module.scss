@@ -38,25 +38,13 @@
         }
       }
     }
-    .ntweet {
-      width: fit-content;
-      padding: 8px;
-      border-radius: 8px;
-      background-color: cornflowerblue;
-      color: black;
-      cursor: pointer;
-    }
   }
-  .content {
+  .ticket {
     padding: 30px 0;
     width: 100%;
     min-height: 50vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    .tweetsContainer {
-      display: flex;
-      flex-direction: column;
-    }
   }
 }

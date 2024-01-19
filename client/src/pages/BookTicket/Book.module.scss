@@ -1,0 +1,110 @@
+.container {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: rgb(0, 0, 0, 0.8);
+  background-blend-mode: multiply;
+  object-fit: cover;
+  background-size: cover;
+  background-position: center;
+  aspect-ratio: 16/10;
+  h2 {
+    margin: 0;
+    padding-top: 20px;
+    text-align: center;
+    font-size: 2rem;
+  }
+  .wrap {
+    height: fit-content;
+    padding-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .show {
+      border-radius: 8px;
+      padding: 10px;
+      width: 300px;
+      height: fit-content;
+      background: linear-gradient(to top left, #28b487, #7dd56f);
+      display: flex;
+      flex-direction: column;
+      color: black;
+      div {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        p {
+          margin: 5px;
+          padding: 10px;
+          font-size: 1.1rem;
+        }
+      }
+      button {
+        margin-top: 5px;
+        font-size: 1.1rem;
+        color: white;
+        align-self: center;
+        background-color: crimson;
+        border-style: none;
+        cursor: pointer;
+        outline: none;
+        text-decoration: none;
+        border-radius: 10px;
+        padding: 8px;
+        height: fit-content;
+        width: fit-content;
+        &:hover {
+          background-color: royalblue;
+        }
+      }
+    }
+  }
+}
+.modal {
+  height: fit-content;
+  .formContainer {
+    form {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      input {
+        margin: 0 10px;
+        background-color: #252525;
+        color: white;
+        width: 80%;
+        border: 1px solid whitesmoke;
+        outline: none;
+        font-size: 1.3rem;
+        border-radius: 10px;
+        padding: 10px;
+        resize: none;
+        transition: all 0.3s ease;
+      }
+      button {
+        margin-top: 5px;
+        font-size: 1.1rem;
+        color: white;
+        align-self: center;
+        background-color: crimson;
+        border-style: none;
+        cursor: pointer;
+        outline: none;
+        text-decoration: none;
+        border-radius: 10px;
+        padding: 8px;
+        height: fit-content;
+        width: fit-content;
+        &:hover {
+          background-color: royalblue;
+        }
+      }
+    }
+  }
+}
+@media (max-width: 700px) {
+  .container {
+    aspect-ratio: 9/16;
+  }
+}

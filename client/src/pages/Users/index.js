@@ -30,6 +30,10 @@ const Users = (props) => {
 
   // authenticate token
   useEffect(() => {
+    if (authUser.role === "ADMIN") {
+      navigate("/admin-panel");
+      return;
+    }
     dispatch(loadUser());
   }, [dispatch]);
 
@@ -42,7 +46,7 @@ const Users = (props) => {
         }
       }
     }
-  }, [userid, authUser]);
+  }, [userid, authUser, isAuthenticated, dispatch]);
 
   return (
     <Layout>
