@@ -30,9 +30,11 @@ const Users = (props) => {
 
   // authenticate token
   useEffect(() => {
-    if (authUser.role === "ADMIN") {
-      navigate("/admin-panel");
-      return;
+    if (authUser) {
+      if (authUser.role === "ADMIN") {
+        navigate("/admin-panel");
+        return;
+      }
     }
     dispatch(loadUser());
   }, [dispatch]);

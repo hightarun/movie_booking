@@ -47,6 +47,13 @@ const Navbar = () => {
       </div>
     </div>
   );
+  const adminLinks = (
+    <div className={styles.menu}>
+      <div onClick={logoutHandler}>
+        <p>Logout</p>
+      </div>
+    </div>
+  );
   // navbar links when not logged in.
   const guestLinks = (
     <div className={styles.menu}>
@@ -67,7 +74,11 @@ const Navbar = () => {
         <img alt="logo" src="/logo.png" />
       </div>
       <div className={styles.links}>
-        {isAuthenticated ? authLinks : guestLinks}
+        {isAuthenticated
+          ? user && user.role === "ADMIN"
+            ? adminLinks
+            : authLinks
+          : guestLinks}
       </div>
     </div>
   );

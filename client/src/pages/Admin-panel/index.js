@@ -4,6 +4,8 @@ import Layout from "../../components/Layout";
 
 import { loadAdmin } from "../../redux/actions/auth";
 import { useSelector, useDispatch } from "react-redux";
+import AdminMovie from "../../components/pageTemplates/AdminMovie";
+import AdminShow from "../../components/pageTemplates/AdminShow";
 
 const Admin = () => {
   const dispatch = useDispatch();
@@ -13,7 +15,14 @@ const Admin = () => {
 
   return (
     <Layout>
-      <div className={styles.container}>Admin</div>
+      <div className={styles.container}>
+        <div className={styles.movie}>
+          <AdminMovie />
+        </div>
+        <div className={styles.show}>
+          <AdminShow />
+        </div>
+      </div>
     </Layout>
   );
 };
